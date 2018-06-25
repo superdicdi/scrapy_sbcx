@@ -11,8 +11,8 @@
 
 BOT_NAME = 'scrapy_sbcx'
 
-SPIDER_MODULES = ['scrapy_sbcx.spiders']
-NEWSPIDER_MODULE = 'scrapy_sbcx.spiders'
+SPIDER_MODULES = ['sbiao_find.spiders']
+NEWSPIDER_MODULE = 'sbiao_find.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -65,7 +65,7 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'scrapy_sbcx.pipelines.MysqlPipeline': 300,
+   'sbiao_find.pipelines.MysqlPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
