@@ -6,6 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from fake_useragent import UserAgent
 
 
 class SbiaoFindSpiderMiddleware(object):
@@ -57,28 +58,22 @@ class SbiaoFindSpiderMiddleware(object):
 
 
 class SbiaoFindDownloaderMiddleware(object):
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
+    # 随机切换 UserAgent
+
+    def __init__(self, crawler):
+        super(SbiaoFindDownloaderMiddleware, self).__init__()
+        self.ua = UserAgent()
+        self.ua_type = crawler.settings.get("RANDOM_UA_TYPE", "random")
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        return cls(crawler)
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
+        def get_ua():
+            return getattr(self.ua, self.ua_type)
 
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
-        return None
+        request.headers.setdefault("user_agent", get_ua())
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

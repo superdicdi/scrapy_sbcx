@@ -8,9 +8,7 @@ class SbcxSpider(scrapy.Spider):
     name = 'sbcx'
     allowed_domains = ['www.sbcx.com']
     start_urls = ['http://www.sbcx.com/']
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
-    }
+
     # 需要登录才能爬取数据
     def start_requests(self):
         post_data = { # value值不能包含int类型
@@ -22,13 +20,12 @@ class SbcxSpider(scrapy.Spider):
         yield scrapy.FormRequest(
             url="http://sbcx.com/?m=Mod&mod=Sys_Login&act=in&reurl=&mid=log_1",
             formdata=post_data,
-            headers=self.headers,
             callback=self.get_detail_url
         )
 
     def get_detail_url(self, response):
         # 需要加上 dont_filter=True，不然会过滤掉待爬取的 url
-        yield scrapy.Request("http://sbcx.com/sbcx/知呱呱", headers=self.headers,  dont_filter=True)
+        yield scrapy.Request("http://sbcx.com/sbcx/知呱呱", dont_filter=True)
 
     def parse(self, response):
         # 提取详情 url
@@ -38,12 +35,12 @@ class SbcxSpider(scrapy.Spider):
                 detail_url = post_node.xpath('td[5]/a/@href').extract_first()
                 image_url = post_node.xpath('td[1]/a/img/@src').extract_first()
                 if detail_url:  # post_nodes 包含了不需要的 tr ，因此含有详情 url 的 tr 标签才进行解析
-                    yield scrapy.Request(url=urlparse.urljoin(response.url, detail_url), headers=self.headers, callback=self.parse_detail, dont_filter=True,
+                    yield scrapy.Request(url=urlparse.urljoin(response.url, detail_url), callback=self.parse_detail, dont_filter=True,
                                          meta={"image_url": urlparse.urljoin(response.url, image_url)})
         # 提取下一页并交给 Scrapy 进行下载
         next_url = response.xpath("//a[@class ='pagedownval']/@href").extract_first()
         if next_url:
-            yield scrapy.Request(url=urlparse.urljoin(response.url, next_url), callback=self.parse, headers=self.headers, dont_filter=True)
+            yield scrapy.Request(url=urlparse.urljoin(response.url, next_url), callback=self.parse, dont_filter=True)
 
     def parse_detail(self, response):
         item_loader = SbiaoItemLoader(item=SbiaoFindItem(), response=response)

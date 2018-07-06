@@ -52,11 +52,12 @@ DOWNLOAD_DELAY = 1
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'scrapy_sbcx.middlewares.SbiaoFindDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'sbiao_find.middlewares.SbiaoFindDownloaderMiddleware': 543,
+   'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+}
 
-# Enable or disable extensions
+RANDOM_UA_TYPE = "random"
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
