@@ -60,4 +60,4 @@ class SbcxCrawlSpider(CrawlSpider):
 
     def get_detail_url(self, response):
         for url in self.start_urls:
-            yield self.make_requests_from_url(url)
+             yield scrapy.Request(url, dont_filter=True)
